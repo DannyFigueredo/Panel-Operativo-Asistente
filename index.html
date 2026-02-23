@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Operativo — Golden Trust Financial</title>
+<style>
+:root {
+  --sidebar-w: 230px;
+  --header-h: 76px;
+  --bg: #f0f2f5;
+  --white: #ffffff;
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --blue-light: #dbeafe;
+  --green: #16a34a;
+  --green-light: #dcfce7;
+  --orange: #ea580c;
+  --orange-light: #ffedd5;
+  --yellow: #f59e0b;
+  --gray: #6b7280;
+  --gray-light: #f3f4f6;
+  --border: #e5e7eb;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --radius: 12px;
+  --shadow: 0 2px 10px rgba(0,0,0,0.08);
+  --sidebar-bg: #1e293b;
+  --sidebar-hover: #334155;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow: hidden;
+}
+a { text-decoration: none; color: inherit; }
+
+/* SIDEBAR */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  z-index: 300;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.sidebar-logo .logo-icon {
+  width: 38px; height: 38px;
+  background: var(--blue);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.sidebar-logo span { color: white; font-weight: 700; font-size: 14px; line-height: 1.3; }
+.sidebar-nav { padding: 12px 0; flex: 1; }
+.nav-label {
+  font-size: 10px; font-weight: 700; color: #475569;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  padding: 12px 20px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 20px;
+  color: #cbd5e1; cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  font-size: 14px; font-weight: 500; user-select: none;
+}
+.nav-item:hover { background: var(--sidebar-hover); color: white; }
+.nav-item.active { background: rgba(37,99,235,0.18); border-left-color: var(--blue); color: white; }
+.nav-item .nav-icon { font-size: 18px; flex-shrink: 0; }
+.sidebar-footer {
+  padding: 14px 20px; border-top: 1px solid #334155;
+  font-size: 11px; color: #475569; text-align: center; flex-shrink: 0;
+}
+
+/* HEADER */
+#header {
+  position: fixed;
+  top: 0; left: var(--sidebar-w); right: 0;
+  height: var(--header-h);
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  gap: 16px;
+}
+.header-left h1 { font-size: 17px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.header-left p  { font-size: 11px; color: var(--text-muted); }
+.header-center {
+  display: flex; align-items: center; gap: 10px;
+  flex: 1; justify-content: center;
+}
+.hfield { display: flex; flex-direction: column; gap: 2px; }
+.hfield-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted);
+}
+.hfield input {
+  padding: 7px 11px; border: 2px solid var(--border);
+  border-radius: 8px; font-size: 13px; font-weight: 600;
+  font-family: inherit; color: var(--text); background: var(--gray-light);
+  transition: all 0.15s; width: 196px;
+}
+.hfield input:focus {
+  outline: none; border-color: var(--blue);
+  background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.hfield input.contact-input {
+  border-color: #86efac; background: var(--green-light);
+  color: var(--green); width: 170px;
+}
+.hfield input.contact-input:focus {
+  border-color: var(--green); background: white; color: var(--text);
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+}
+.hfield input.phone-input { width: 148px; }
+.header-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+.header-right { text-align: right; flex-shrink: 0; }
+#fl-time {
+  font-size: 22px; font-weight: 800; color: var(--blue);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.5px;
+}
+#fl-date { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.fl-badge {
+  display: inline-block; background: var(--blue-light); color: var(--blue);
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; padding: 2px 7px; border-radius: 20px; margin-bottom: 2px;
+}
+
+/* CONTENT & VIEWS */
+#content {
+  position: fixed;
+  top: var(--header-h); left: var(--sidebar-w); right: 0; bottom: 0;
+  overflow-y: auto;
+}
+.view { display: none; padding: 28px; min-height: 100%; animation: fadeIn 0.18s ease; }
+.view.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* PAGE TITLE */
+.page-title { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.page-title-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.page-title-icon.blue   { background: var(--blue-light); }
+.page-title-icon.green  { background: var(--green-light); }
+.page-title-icon.orange { background: var(--orange-light); }
+.page-title-icon.yellow { background: #fef3c7; }
+.page-title-icon.gray   { background: var(--gray-light); }
+.page-title h2 { font-size: 22px; font-weight: 800; color: var(--text); }
+.page-title p  { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
+
+/* CARD */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px;
+}
+.card-title {
+  font-size: 13px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.6px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title.orange { color: var(--orange); }
+.card-title.blue   { color: var(--blue-dark); }
+.card-title.green  { color: var(--green); }
+
+/* LINKS */
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 14px;
+}
+.link-card {
+  background: var(--blue-light); border-radius: var(--radius);
+  padding: 20px 12px; display: flex; flex-direction: column;
+  align-items: center; gap: 9px; cursor: pointer;
+  transition: all 0.18s; color: var(--blue);
+  font-weight: 600; font-size: 13px; text-align: center;
+  border: 2px solid transparent;
+}
+.link-card:hover { background: var(--blue); color: white; transform: translateY(-3px); box-shadow: 0 6px 16px rgba(37,99,235,0.28); }
+.link-card .card-icon { font-size: 30px; }
+.link-card.green { background: var(--green-light); color: var(--green); }
+.link-card.green:hover { background: var(--green); color: white; box-shadow: 0 6px 16px rgba(22,163,74,0.28); }
+.link-card.orange { background: var(--orange-light); color: var(--orange); }
+.link-card.orange:hover { background: var(--orange); color: white; box-shadow: 0 6px 16px rgba(234,88,12,0.28); }
+
+/* GUIONES */
+.guiones-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.guion-block { background: var(--gray-light); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+.guion-block:last-child { margin-bottom: 0; }
+.guion-block label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.guion-preview {
+  width: 100%; min-height: 88px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 13px; font-family: inherit; resize: vertical;
+  background: white; color: var(--text); transition: border-color 0.15s;
+}
+.guion-preview:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.guion-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+/* BOTONES */
+.btn {
+  padding: 8px 16px; border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; display: inline-flex; align-items: center;
+  gap: 6px; font-family: inherit;
+}
+.btn-blue   { background: var(--blue);  color: white; }
+.btn-blue:hover   { background: var(--blue-dark); }
+.btn-green  { background: var(--green); color: white; }
+.btn-green:hover  { background: #15803d; }
+.btn-gray   { background: #e5e7eb; color: var(--text); }
+.btn-gray:hover   { background: #d1d5db; }
+.btn.success { background: #10b981 !important; color: white !important; }
+
+/* WHATSAPP */
+.wa-info-bar {
+  background: var(--green-light); border: 2px solid #86efac;
+  border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px;
+  font-size: 13px; color: var(--green); font-weight: 600;
+}
+.wa-msgs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.wa-msg-card { border: 2px solid #86efac; border-radius: 10px; padding: 14px; background: white; }
+.wa-msg-card label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--green); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.wa-msg-card textarea {
+  width: 100%; min-height: 80px; padding: 9px 11px;
+  border: 1px solid var(--border); border-radius: 7px;
+  font-size: 13px; font-family: inherit; resize: vertical; background: #f9fafb;
+}
+.wa-msg-card textarea:focus { outline: none; border-color: var(--green); }
+
+/* CHECKLIST */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 8px; margin-bottom: 6px;
+  background: var(--gray-light); font-size: 15px; cursor: pointer; transition: background 0.12s;
+}
+.checklist li:hover { background: #e5e7eb; }
+.checklist input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--blue); flex-shrink: 0; }
+.check-text { transition: all 0.15s; }
+.checklist input[type="checkbox"]:checked + .check-text { text-decoration: line-through; color: var(--text-muted); }
+
+/* CONTADOR */
+.counter-wrapper { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+.counter-left { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.counter-display {
+  background: var(--blue-light); border: 3px solid #bfdbfe;
+  border-radius: 16px; padding: 22px 52px; text-align: center; min-width: 190px;
+}
+.count-num {
+  font-size: 80px; font-weight: 900; color: var(--blue);
+  line-height: 1; font-variant-numeric: tabular-nums; transition: transform 0.1s;
+}
+.count-num.bump { transform: scale(1.14); }
+.count-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+.counter-btns { display: flex; gap: 14px; }
+.cbtn {
+  width: 58px; height: 58px; border: none; border-radius: 50%;
+  font-size: 26px; font-weight: 800; cursor: pointer;
+  transition: all 0.15s; box-shadow: var(--shadow); font-family: inherit;
+}
+.cbtn-plus  { background: var(--blue); color: white; }
+.cbtn-plus:hover  { background: var(--blue-dark); transform: scale(1.08); }
+.cbtn-minus { background: #e5e7eb; color: var(--text); }
+.cbtn-minus:hover { background: #d1d5db; transform: scale(1.08); }
+.cbtn-reset { background: #fee2e2; color: #dc2626; font-size: 18px; }
+.cbtn-reset:hover { background: #fecaca; }
+.counter-right { flex: 1; min-width: 220px; }
+.meta-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.meta-row label { font-weight: 700; font-size: 15px; }
+.meta-row input {
+  width: 80px; padding: 8px 12px; border: 2px solid var(--border);
+  border-radius: 8px; font-size: 16px; font-weight: 700;
+  text-align: center; font-family: inherit;
+}
+.meta-row input:focus { outline: none; border-color: var(--blue); }
+.progress-info { font-size: 18px; font-weight: 700; color: var(--blue); margin-bottom: 10px; }
+.progress-track { height: 18px; background: #e5e7eb; border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; border-radius: 100px; background: var(--blue); transition: width 0.35s, background 0.35s; }
+.progress-pct { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+/* NOTAS */
+.nota-input-area {
+  width: 100%; min-height: 100px; padding: 14px;
+  border: 2px solid #fde68a; border-radius: 10px;
+  font-size: 15px; font-family: inherit; resize: vertical;
+  background: #fefce8; color: var(--text); transition: border-color 0.15s;
+}
+.nota-input-area:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.12); }
+.nota-input-area::placeholder { color: #a16207; opacity: 0.5; }
+.notas-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.nota-card {
+  background: #fefce8; border: 2px solid #fde68a;
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; gap: 12px; align-items: flex-start;
+  animation: fadeIn 0.2s ease;
+}
+.nota-card-body { flex: 1; }
+.nota-card-text { font-size: 14px; color: var(--text); white-space: pre-wrap; line-height: 1.6; }
+.nota-card-meta { font-size: 11px; color: #a16207; margin-top: 6px; font-weight: 600; }
+.nota-delete {
+  background: none; border: none; cursor: pointer;
+  font-size: 16px; color: #d97706; padding: 2px 4px;
+  border-radius: 6px; transition: background 0.15s; flex-shrink: 0; line-height: 1;
+}
+.nota-delete:hover { background: #fef3c7; color: #dc2626; }
+.notas-empty { text-align: center; padding: 32px; color: #a16207; opacity: 0.6; font-size: 14px; }
+
+/* FAQ */
+.faq-search-wrap { position: relative; margin-bottom: 18px; }
+.faq-search-wrap .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; pointer-events: none; }
+#faq-search {
+  width: 100%; padding: 11px 14px 11px 44px;
+  border: 2px solid var(--border); border-radius: 10px;
+  font-size: 15px; font-family: inherit; transition: border-color 0.15s;
+}
+#faq-search:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.faq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.faq-card { border-radius: 10px; padding: 16px; background: var(--gray-light); border-left: 4px solid var(--gray); }
+.faq-card.hidden { display: none; }
+.faq-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.faq-card p  { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.faq-card mark { background: #fef08a; border-radius: 2px; padding: 0 2px; }
+.faq-no-results { display: none; text-align: center; padding: 40px; color: var(--text-muted); font-size: 15px; }
+
+/* TOAST */
+#toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: #10b981; color: white;
+  padding: 13px 22px; border-radius: 10px;
+  font-weight: 700; font-size: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  opacity: 0; transform: translateY(12px); transition: all 0.25s;
+  z-index: 9999; pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">📋</div>
+    <span>Panel<br>Operativo</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-label">Accesos</div>
+    <div class="nav-item active" data-view="view-links">
+      <span class="nav-icon">🔗</span> Enlaces Rápidos
+    </div>
+    <div class="nav-label">Trabajo</div>
+    <div class="nav-item" data-view="view-guiones">
+      <span class="nav-icon">📝</span> Guiones
+    </div>
+    <div class="nav-item" data-view="view-wa">
+      <span class="nav-icon">💬</span> WhatsApp
+    </div>
+    <div class="nav-item" data-view="view-checklist">
+      <span class="nav-icon">✅</span> Checklist
+    </div>
+    <div class="nav-label">Métricas</div>
+    <div class="nav-item" data-view="view-contador">
+      <span class="nav-icon">📞</span> Contador
+    </div>
+    <div class="nav-label">Más</div>
+    <div class="nav-item" data-view="view-notas">
+      <span class="nav-icon">🗒️</span> Notas
+    </div>
+    <div class="nav-item" data-view="view-faq">
+      <span class="nav-icon">ℹ️</span> Info / FAQ
+    </div>
+  </div>
+  <div class="sidebar-footer">Panel v4.0 · Golden Trust</div>
+</nav>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-left">
+    <h1>Panel Operativo</h1>
+    <p>Centro de Operaciones Diario</p>
+  </div>
+  <div class="header-center">
+    <div class="hfield">
+      <span class="hfield-label">👩‍💼 Asistente</span>
+      <!-- ✏️ Cambia este valor por tu nombre -->
+      <input type="text" id="nombre-asistente" value="Andreina · Golden Trust Financial">
+    </div>
+    <div class="header-divider"></div>
+    <div class="hfield">
+      <span class="hfield-label">👤 Nombre del contacto</span>
+      <input type="text" id="nombre-contacto" class="contact-input"
+             placeholder="Nombre del cliente..." oninput="actualizarNombre()">
+    </div>
+    <div class="hfield">
+      <span class="hfield-label">📱 Número WhatsApp</span>
+      <input type="text" id="wa-numero" class="phone-input" placeholder="17865551234">
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="fl-badge">🌴 Florida Time</div>
+    <div id="fl-time">--:-- --</div>
+    <div id="fl-date">Cargando...</div>
+  </div>
+</header>
+
+<!-- CONTENT — VISTAS -->
+<div id="content">
+
+  <!-- VISTA: ENLACES RÁPIDOS -->
+  <div class="view active" id="view-links">
+    <div class="page-title">
+      <div class="page-title-icon blue">🔗</div>
+      <div><h2>Enlaces Rápidos</h2><p>Accede a tus herramientas con un clic</p></div>
+    </div>
+    <div class="card">
+      <div class="links-grid">
+        <!-- ✏️ CAMBIA LOS href="" POR TUS LINKS REALES -->
+        <a class="link-card" href="https://www.myfloridalicense.com/wl11.asp" target="_blank">
+          <span class="card-icon">🏛️</span>FL License Search
+        </a>
+        <a class="link-card" href="https://drive.google.com" target="_blank">
+          <span class="card-icon">📁</span>Google Drive
+        </a>
+        <a class="link-card orange" href="https://docs.google.com" target="_blank">
+          <span class="card-icon">📄</span>Doc. Alower
+        </a>
+        <a class="link-card orange" href="https://docs.google.com/spreadsheets" target="_blank">
+          <span class="card-icon">📊</span>Hoja Seguimiento
+        </a>
+        <a class="link-card green" href="https://web.whatsapp.com" target="_blank">
+          <span class="card-icon">💬</span>WhatsApp Web
+        </a>
+        <a class="link-card" href="https://mail.google.com" target="_blank">
+          <span class="card-icon">📧</span>Gmail
+        </a>
+        <a class="link-card" href="https://calendar.google.com" target="_blank">
+          <span class="card-icon">📅</span>Calendario
+        </a>
+        <a class="link-card" href="https://calendly.com" target="_blank">
+          <span class="card-icon">🗓️</span>Calendly
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA: GUIONES -->
+  <div class="view" id="view-guiones">
+    <div class="page-title">
+      <div class="page-title-icon orange">📝</div>
+      <div><h2>Guiones</h2><p>El nombre del contacto se actualiza automáticamente desde el header</p></div>
+    </div>
+    <div class="guiones-cols">
+      <div class="card">
+        <div class="card-title orange">🎯 Reclutamiento</div>
+        <div class="guion-block">
+          <label>Guión Principal</label>
+          <textarea class="guion-preview" id="g1"
+            data-template="Hola [NOMBRE], mi nombre es [TU NOMBRE] y te llamo porque vi tu perfil y creo que podrías ser una excelente fit para una oportunidad que tenemos disponible. ¿Tienes unos minutos para hablar?"></textarea>
+          <div class="guion-actions">
+            <button class="btn btn-blue"  onclick="copiar('g1', this)">📋 Copiar</button>
+            <button class="btn btn-green" onclick="abrirWA('g1')">💬 WhatsApp</button>
+          </div>
+        </div>
+        <div class="guion-block">
+          <label>Seguimiento</label>
+          <textarea class="guion-preview" id="g2"
+            data-template="Hola [NOMBRE], soy [TU NOMBRE]. Te contacté hace unos días sobre una oportunidad de negocio. ¿Pudiste pensarlo? Me gustaría contarte más detalles, ¿cuándo tienes disponibilidad?"></textarea>
+          <div class="guion-actions">
+            <button class="btn btn-blue"  onclick="copiar('g2', this)">📋 Copiar</button>
+            <button class="btn btn-green" onclick="abrirWA('g2')">💬 WhatsApp</button>
+          </div>
+        </div>
+        <div class="guion-block">
+          <label>Manejo de Objeciones</label>
+          <textarea class="guion-preview" id="g3"
+            data-template="Entiendo tu preocupación, [NOMBRE]. Muchas personas pensaban lo mismo antes de conocer el modelo. ¿Qué te parece si te presento la información y después decides con calma? Solo son 30 minutos."></textarea>
+          <div class="guion-actions">
+            <button class="btn btn-blue"  onclick="copiar('g3', this)">📋 Copiar</button>
+            <button class="btn btn-green" onclick="abrirWA('g3')">💬 WhatsApp</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title blue">💰 IUL / IUE</div>
+        <div class="guion-block">
+          <label>Script Agendamiento</label>
+          <textarea class="guion-preview" id="g4"
+            data-template="Hola [NOMBRE], te llamo para coordinar una reunión donde te vamos a explicar cómo funciona el IUL/IUE y cómo puede beneficiar a tu familia. ¿Tienes disponibilidad el [DÍA] a las [HORA]?"></textarea>
+          <div class="guion-actions">
+            <button class="btn btn-blue"  onclick="copiar('g4', this)">📋 Copiar</button>
+            <button class="btn btn-green" onclick="abrirWA('g4')">💬 WhatsApp</button>
+          </div>
+        </div>
+        <div class="guion-block">
+          <label>Script Confirmación</label>
+          <textarea class="guion-preview" id="g5"
+            data-template="Hola [NOMBRE], te confirmo que tu cita es el [DÍA] a las [HORA]. El link para unirte es: [LINK]. ¿Tienes alguna pregunta antes de la reunión?"></textarea>
+          <div class="guion-actions">
+            <button class="btn btn-blue"  onclick="copiar('g5', this)">📋 Copiar</button>
+            <button class="btn btn-green" onclick="abrirWA('g5')">💬 WhatsApp</button>
+          </div>
+        </div>
+        <div class="guion-block">
+          <label>Script Post-Cita</label>
+          <textarea class="guion-preview" id="g6"
+            data-template="Hola [NOMBRE], gracias por tomarte el tiempo hoy. ¿Pudiste ver con claridad cómo funciona el plan? ¿Tienes alguna pregunta o necesitas más información para tomar una decisión?"></textarea>
+          <div class="guion-actions">
+            <button class="btn btn-blue"  onclick="copiar('g6', this)">📋 Copiar</button>
+            <button class="btn btn-green" onclick="abrirWA('g6')">💬 WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA: WHATSAPP -->
+  <div class="view" id="view-wa">
+    <div class="page-title">
+      <div class="page-title-icon green">💬</div>
+      <div><h2>Mensajes WhatsApp</h2><p>Mensajes rápidos personalizados</p></div>
+    </div>
+    <div class="wa-info-bar">
+      💡 El nombre y número se toman del <strong>header de arriba</strong>. Escríbelos allí y los mensajes se actualizan automáticamente.
+    </div>
+    <div class="wa-msgs-grid">
+      <div class="wa-msg-card">
+        <label>Primer contacto</label>
+        <textarea class="guion-preview" id="wm1"
+          data-template="Hola [NOMBRE], vi que puedes estar interesado/a en mejorar tu situación financiera. Soy [TU NOMBRE] y me gustaría contarte sobre una oportunidad. ¿Tienes un momento?"></textarea>
+        <div class="guion-actions" style="margin-top:10px">
+          <button class="btn btn-blue"  onclick="copiar('wm1', this)">📋 Copiar</button>
+          <button class="btn btn-green" onclick="abrirWA('wm1')">💬 Abrir WA</button>
+        </div>
+      </div>
+      <div class="wa-msg-card">
+        <label>Recordatorio de cita</label>
+        <textarea class="guion-preview" id="wm2"
+          data-template="Hola [NOMBRE] 👋 Te recuerdo que mañana tenemos nuestra reunión a las [HORA]. ¡Ya casi! Cualquier pregunta me avisas 😊"></textarea>
+        <div class="guion-actions" style="margin-top:10px">
+          <button class="btn btn-blue"  onclick="copiar('wm2', this)">📋 Copiar</button>
+          <button class="btn btn-green" onclick="abrirWA('wm2')">💬 Abrir WA</button>
+        </div>
+      </div>
+      <div class="wa-msg-card">
+        <label>Seguimiento post-presentación</label>
+        <textarea class="guion-preview" id="wm3"
+          data-template="Hola [NOMBRE], ¿cómo estás? Solo quería saber si pudiste pensar en lo que vimos. Estoy aquí para responder cualquier duda que tengas 🙂"></textarea>
+        <div class="guion-actions" style="margin-top:10px">
+          <button class="btn btn-blue"  onclick="copiar('wm3', this)">📋 Copiar</button>
+          <button class="btn btn-green" onclick="abrirWA('wm3')">💬 Abrir WA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA: CHECKLIST -->
+  <div class="view" id="view-checklist">
+    <div class="page-title">
+      <div class="page-title-icon blue">✅</div>
+      <div><h2>Checklist Diario</h2><p>Tareas del día</p></div>
+    </div>
+    <div class="card" style="max-width:620px">
+      <!-- ✏️ EDITA LAS TAREAS AQUÍ -->
+      <ul class="checklist" id="checklist">
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Revisar listados nuevos</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Confirmar citas del día</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Enviar seguimientos pendientes</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Actualizar hoja de seguimiento</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Revisar WhatsApp y mensajes</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Llamadas de prospección</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Reportar resultados del día</span></li>
+        <li onclick="toggleCheck(this)"><input type="checkbox" onclick="event.stopPropagation()"><span class="check-text">Preparar agenda de mañana</span></li>
+      </ul>
+      <div style="margin-top:16px">
+        <button class="btn btn-gray" onclick="resetChecklist()">🔄 Resetear checklist</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA: CONTADOR -->
+  <div class="view" id="view-contador">
+    <div class="page-title">
+      <div class="page-title-icon blue">📞</div>
+      <div><h2>Contador de Llamadas</h2><p>Seguimiento de actividad diaria</p></div>
+    </div>
+    <div class="card" style="max-width:580px">
+      <div class="counter-wrapper">
+        <div class="counter-left">
+          <div class="counter-display">
+            <div class="count-num" id="count-num">0</div>
+            <div class="count-label">Llamadas hoy</div>
+          </div>
+          <div class="counter-btns">
+            <button class="cbtn cbtn-plus"  onclick="cambiarContador(1)"  title="+1">+</button>
+            <button class="cbtn cbtn-minus" onclick="cambiarContador(-1)" title="-1">−</button>
+            <button class="cbtn cbtn-reset" onclick="resetContador()"     title="Resetear">🔄</button>
+          </div>
+        </div>
+        <div class="counter-right">
+          <div class="meta-row">
+            <label>🎯 Meta diaria:</label>
+            <input type="number" id="meta-input" value="25" min="1" oninput="actualizarProgreso()">
+            <span>llamadas</span>
+          </div>
+          <div class="progress-info" id="progress-info">0 / 25 llamadas</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          </div>
+          <div class="progress-pct" id="progress-pct">0% completado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA: NOTAS -->
+  <div class="view" id="view-notas">
+    <div class="page-title">
+      <div class="page-title-icon yellow">🗒️</div>
+      <div><h2>Notas</h2><p>Registro acumulativo — se guardan automáticamente</p></div>
+    </div>
+    <div class="card" style="max-width:720px">
+      <textarea class="nota-input-area" id="nota-nueva" placeholder="Escribe una nota y presiona Guardar nota..."></textarea>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button class="btn btn-blue" onclick="agregarNota()">💾 Guardar nota</button>
+        <button class="btn btn-gray" onclick="borrarTodasNotas()">🗑️ Borrar todas</button>
+        <span style="font-size:12px; color:var(--text-muted); margin-left:4px;">Las notas se guardan aunque cierres la página</span>
+      </div>
+      <div class="notas-list" id="notas-list"></div>
+    </div>
+  </div>
+
+  <!-- VISTA: FAQ -->
+  <div class="view" id="view-faq">
+    <div class="page-title">
+      <div class="page-title-icon gray">ℹ️</div>
+      <div><h2>Información Rápida (FAQ)</h2><p>Respuestas para preguntas frecuentes</p></div>
+    </div>
+    <div class="card">
+      <div class="faq-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="faq-search" placeholder="Buscar... ej: IUL, costo, requisitos" oninput="buscarFAQ(this.value)">
+      </div>
+      <div class="faq-no-results" id="faq-no-results">No se encontraron resultados.</div>
+      <!-- ✏️ EDITA ESTAS CARDS CON TU INFORMACIÓN REAL -->
+      <div class="faq-grid" id="faq-grid">
+        <div class="faq-card" style="border-left-color:var(--blue)" data-texto="qué es iul indexed universal life seguro vida">
+          <h4>💡 ¿Qué es el IUL?</h4>
+          <p>IUL = Indexed Universal Life. Seguro de vida permanente con cuenta de valor en efectivo que crece basada en un índice del mercado (S&P 500), con protección contra pérdidas.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--blue)" data-texto="qué es iue employer empresa beneficio fiscal">
+          <h4>💡 ¿Qué es el IUE?</h4>
+          <p>IUE = Indexed Universal Life Employer. Similar al IUL pero estructurado como beneficio empresarial con ventajas fiscales para dueños de negocio o empleados.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--green)" data-texto="qué ofrecemos productos servicios beneficios seguros ahorro inversión">
+          <h4>🎁 ¿Qué ofrecemos?</h4>
+          <p>Planificación financiera a través de seguros de vida con componente de ahorro e inversión. Protección + crecimiento de capital + beneficios fiscales.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--green)" data-texto="cómo es el proceso pasos llamada presentación aplicación">
+          <h4>🔄 ¿Cómo es el proceso?</h4>
+          <p>1. Llamada inicial (5-10 min) → 2. Presentación virtual (30 min) → 3. Análisis personalizado → 4. Aplicación → 5. Aprobación y póliza activa.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--orange)" data-texto="duración presentación tiempo minutos zoom virtual">
+          <h4>⏱️ ¿Duración de presentación?</h4>
+          <p>Aproximadamente 30 minutos de forma virtual (Zoom/Teams). El cliente puede conectarse desde cualquier lugar.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--orange)" data-texto="requisitos edad ssn florida itin médica">
+          <h4>📋 Requisitos básicos</h4>
+          <p>Mayor de 18 años · Residir en Florida u otros estados · SSN o ITIN · Pasar evaluación médica básica.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--gray)" data-texto="es inversión seguro híbrido fondo diferencia">
+          <h4>❓ ¿Es inversión o seguro?</h4>
+          <p>Es ambos. El IUL es un producto híbrido: seguro de vida + vehículo de ahorro con crecimiento indexado. No es un seguro de término ni un fondo tradicional.</p>
+        </div>
+        <div class="faq-card" style="border-left-color:var(--gray)" data-texto="costo precio cuánto vale análisis gratuito">
+          <h4>📞 ¿Qué decir si preguntan el costo?</h4>
+          <p>El costo varía según edad, salud y monto deseado. El análisis es personalizado y completamente gratuito. Lo importante es diseñar el plan para las metas del cliente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fin #content -->
+
+<div id="toast">✅ ¡Copiado!</div>
+
+<script>
+// ============================================================
+// NAVEGACIÓN POR VISTAS
+// ============================================================
+function activarVista(viewId, guardar = true) {
+  // Sidebar
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-view="${viewId}"]`);
+  if (navItem) navItem.classList.add('active');
+  // Vista
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById(viewId);
+  if (target) {
+    target.classList.add('active');
+    document.getElementById('content').scrollTop = 0;
+  }
+  // Persistir
+  if (guardar) localStorage.setItem('panel_vista', viewId);
+}
+
+document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+  item.addEventListener('click', () => activarVista(item.dataset.view));
+});
+
+// Restaurar vista al cargar
+const vistaGuardada = localStorage.getItem('panel_vista') || 'view-links';
+activarVista(vistaGuardada, false);
+
+// ============================================================
+// HORA FLORIDA EN TIEMPO REAL
+// ============================================================
+function actualizarHora() {
+  const ahora = new Date();
+  document.getElementById('fl-time').textContent = ahora.toLocaleTimeString('en-US', {
+    timeZone: 'America/New_York',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+  });
+  const fecha = ahora.toLocaleDateString('es-ES', {
+    timeZone: 'America/New_York',
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+  document.getElementById('fl-date').textContent = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+}
+actualizarHora();
+setInterval(actualizarHora, 1000);
+
+// ============================================================
+// NOMBRE CONTACTO → actualiza todos los guiones y mensajes WA
+// ============================================================
+function actualizarNombre() {
+  const nombre = document.getElementById('nombre-contacto').value.trim() || '[NOMBRE]';
+  document.querySelectorAll('.guion-preview').forEach(el => {
+    if (el.dataset.template) {
+      el.value = el.dataset.template.replace(/\[NOMBRE\]/g, nombre);
+    }
+  });
+}
+actualizarNombre();
+
+// ============================================================
+// TOAST
+// ============================================================
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✅ ' + (msg || '¡Copiado!');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// COPIAR
+// ============================================================
+function copiar(id, btn) {
+  const texto = document.getElementById(id).value;
+  navigator.clipboard.writeText(texto).then(() => {
+    mostrarToast('¡Copiado!');
+    if (btn) {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✅ Copiado';
+      btn.classList.add('success');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2000);
+    }
+  }).catch(() => {
+    const el = document.getElementById(id); el.select(); document.execCommand('copy');
+    mostrarToast('¡Copiado!');
+  });
+}
+
+// ============================================================
+// ABRIR WHATSAPP
+// ============================================================
+function abrirWA(id) {
+  const texto  = document.getElementById(id).value;
+  const numero = document.getElementById('wa-numero').value.replace(/\D/g, '');
+  const url    = numero
+    ? `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`
+    : `https://wa.me/?text=${encodeURIComponent(texto)}`;
+  window.open(url, '_blank');
+}
+
+// ============================================================
+// UTILIDAD: FECHA HOY EN FLORIDA
+// ============================================================
+function hoyFL() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); // YYYY-MM-DD
+}
+
+// ============================================================
+// CHECKLIST — persiste, se resetea automáticamente cada día
+// ============================================================
+function toggleCheck(li) {
+  const cb = li.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  guardarChecklist();
+}
+function guardarChecklist() {
+  const estados = [];
+  document.querySelectorAll('#checklist input[type="checkbox"]').forEach(c => estados.push(c.checked));
+  localStorage.setItem('panel_checklist', JSON.stringify(estados));
+  localStorage.setItem('panel_checklist_fecha', hoyFL());
+}
+function cargarChecklist() {
+  const fechaGuardada = localStorage.getItem('panel_checklist_fecha');
+  if (fechaGuardada !== hoyFL()) {
+    // Nuevo día — resetear
+    localStorage.removeItem('panel_checklist');
+    localStorage.setItem('panel_checklist_fecha', hoyFL());
+    return;
+  }
+  const estados = JSON.parse(localStorage.getItem('panel_checklist') || '[]');
+  document.querySelectorAll('#checklist input[type="checkbox"]').forEach((c, i) => {
+    if (estados[i] !== undefined) c.checked = estados[i];
+  });
+}
+function resetChecklist() {
+  document.querySelectorAll('#checklist input[type="checkbox"]').forEach(c => c.checked = false);
+  guardarChecklist();
+  mostrarToast('Checklist reseteado');
+}
+
+// ============================================================
+// CONTADOR — persiste, se resetea automáticamente cada día
+// ============================================================
+let contador = 0;
+function cambiarContador(delta) {
+  contador = Math.max(0, contador + delta);
+  const el = document.getElementById('count-num');
+  el.textContent = contador;
+  el.classList.add('bump');
+  setTimeout(() => el.classList.remove('bump'), 150);
+  actualizarProgreso();
+  guardarContador();
+}
+function resetContador() {
+  contador = 0;
+  document.getElementById('count-num').textContent = 0;
+  actualizarProgreso();
+  guardarContador();
+  mostrarToast('Contador reseteado');
+}
+function guardarContador() {
+  const meta = document.getElementById('meta-input').value;
+  localStorage.setItem('panel_contador', JSON.stringify({ valor: contador, meta }));
+  localStorage.setItem('panel_contador_fecha', hoyFL());
+}
+function cargarContador() {
+  const fechaGuardada = localStorage.getItem('panel_contador_fecha');
+  const datos = JSON.parse(localStorage.getItem('panel_contador') || '{}');
+  // Nuevo día — resetear contador pero conservar meta
+  if (fechaGuardada !== hoyFL()) {
+    contador = 0;
+    if (datos.meta) document.getElementById('meta-input').value = datos.meta;
+    localStorage.setItem('panel_contador_fecha', hoyFL());
+  } else {
+    contador = datos.valor || 0;
+    if (datos.meta) document.getElementById('meta-input').value = datos.meta;
+  }
+  document.getElementById('count-num').textContent = contador;
+  actualizarProgreso();
+}
+function actualizarProgreso() {
+  const meta = parseInt(document.getElementById('meta-input').value) || 25;
+  const pct  = Math.min(100, Math.round((contador / meta) * 100));
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-info').textContent = `${contador} / ${meta} llamadas`;
+  document.getElementById('progress-pct').textContent  = `${pct}% completado`;
+  document.getElementById('progress-fill').style.background =
+    pct >= 100 ? '#16a34a' : pct >= 60 ? '#f59e0b' : 'var(--blue)';
+  guardarContador();
+}
+
+// ============================================================
+// NOTAS — SISTEMA ACUMULATIVO CON localStorage
+// ============================================================
+function getFechaHoraFL() {
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-ES', {
+    timeZone: 'America/New_York',
+    weekday: 'short', day: 'numeric', month: 'short'
+  });
+  const hora = ahora.toLocaleTimeString('en-US', {
+    timeZone: 'America/New_York',
+    hour: '2-digit', minute: '2-digit', hour12: true
+  });
+  return fecha + ' · ' + hora;
+}
+
+function cargarNotas() {
+  const notas = JSON.parse(localStorage.getItem('panel_notas') || '[]');
+  renderizarNotas(notas);
+}
+
+function renderizarNotas(notas) {
+  const lista = document.getElementById('notas-list');
+  if (!notas.length) {
+    lista.innerHTML = '<div class="notas-empty">📝 No hay notas aún. ¡Agrega la primera!</div>';
+    return;
+  }
+  lista.innerHTML = notas.map((n, i) => `
+    <div class="nota-card">
+      <div class="nota-card-body">
+        <div class="nota-card-text">${n.texto.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="nota-card-meta">🕐 ${n.fecha}</div>
+      </div>
+      <button class="nota-delete" onclick="borrarNota(${i})" title="Borrar nota">✕</button>
+    </div>
+  `).reverse().join(''); // más recientes arriba
+}
+
+function agregarNota() {
+  const input = document.getElementById('nota-nueva');
+  const texto = input.value.trim();
+  if (!texto) { mostrarToast('Escribe algo primero'); return; }
+  const notas = JSON.parse(localStorage.getItem('panel_notas') || '[]');
+  notas.push({ texto, fecha: getFechaHoraFL() });
+  localStorage.setItem('panel_notas', JSON.stringify(notas));
+  input.value = '';
+  renderizarNotas(notas);
+  mostrarToast('¡Nota guardada!');
+}
+
+function borrarNota(idx) {
+  const notas = JSON.parse(localStorage.getItem('panel_notas') || '[]');
+  // idx is from reversed display, convert back
+  const realIdx = notas.length - 1 - idx;
+  notas.splice(realIdx, 1);
+  localStorage.setItem('panel_notas', JSON.stringify(notas));
+  renderizarNotas(notas);
+  mostrarToast('Nota eliminada');
+}
+
+function borrarTodasNotas() {
+  if (!confirm('¿Borrar todas las notas?')) return;
+  localStorage.removeItem('panel_notas');
+  renderizarNotas([]);
+  mostrarToast('Notas borradas');
+}
+
+// Permitir Ctrl+Enter para guardar nota rápidamente
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter' && document.activeElement.id === 'nota-nueva') {
+    agregarNota();
+  }
+});
+
+// ============================================================
+// INICIO — cargar datos guardados
+// ============================================================
+cargarContador();
+cargarChecklist();
+cargarNotas();
+
+// ============================================================
+// BÚSQUEDA FAQ
+// ============================================================
+function buscarFAQ(q) {
+  const query = q.toLowerCase().trim();
+  let visibles = 0;
+  document.querySelectorAll('.faq-card').forEach(card => {
+    const texto = (card.dataset.texto + ' ' + card.textContent).toLowerCase();
+    if (!query || texto.includes(query)) {
+      card.classList.remove('hidden'); visibles++;
+      if (query) {
+        card.querySelectorAll('p, h4').forEach(el => {
+          el.innerHTML = el.textContent.replace(new RegExp(`(${query})`, 'gi'), '<mark>$1</mark>');
+        });
+      } else {
+        card.querySelectorAll('p, h4').forEach(el => { el.innerHTML = el.textContent; });
+      }
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+  document.getElementById('faq-no-results').style.display = visibles === 0 ? 'block' : 'none';
+}
+</script>
+</body>
+</html>
