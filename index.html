@@ -254,14 +254,34 @@ code{font-family:'DM Mono',monospace;font-size:12px}
 
 /* ── GUIONES / WA CARDS ── */
 .msgs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.msg-card{border:1.5px solid var(--border);border-radius:var(--r);padding:14px;background:#fff;position:relative}
-.msg-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.msg-card{
+  border:1.5px solid var(--border);border-radius:var(--r);
+  background:#fff;position:relative;transition:box-shadow .15s,border-color .15s;
+  overflow:hidden;cursor:pointer;
+}
+.msg-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(37,99,235,.12)}
+.msg-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 0}
 .msg-card-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 .msg-card-actions{display:flex;gap:4px}
+.msg-preview{padding:8px 14px 0}
+.msg-preview-text{
+  font-size:13px;color:var(--text);line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  white-space:pre-wrap;word-break:break-word;
+}
+.msg-preview-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px 12px;
+}
+.msg-preview-expand{
+  font-size:11px;font-weight:700;color:var(--blue);cursor:pointer;
+  background:none;border:none;padding:0;display:flex;align-items:center;gap:3px;
+}
+.msg-preview-expand:hover{text-decoration:underline}
 .guion-ta{
   width:100%;min-height:85px;padding:9px 11px;border:1.5px solid var(--border);
   border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;
-  background:var(--light);color:var(--text);transition:border-color .15s;
+  background:var(--light);color:var(--text);transition:border-color .15s;margin-top:8px;
 }
 .guion-ta:focus{outline:none;border-color:var(--blue);background:#fff}
 .msg-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -441,7 +461,61 @@ code{font-family:'DM Mono',monospace;font-size:12px}
 .proc-card-body{display:none;padding:14px 16px;border-top:1px solid var(--border);background:#fff;font-size:13px;line-height:1.7;white-space:pre-wrap}
 .proc-card-body.open{display:block}
 
-/* ── MODAL ── */
+/* ── MODAL PREVIEW GUIÓN ── */
+#guion-preview-overlay{
+  position:fixed;inset:0;z-index:2000;
+  display:none;align-items:center;justify-content:center;padding:24px;
+  background:rgba(15,23,42,.6);backdrop-filter:blur(6px);
+}
+#guion-preview-overlay.open{display:flex}
+.guion-preview-modal{
+  background:#fff;border-radius:20px;width:100%;max-width:580px;
+  box-shadow:0 32px 80px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.1);
+  animation:guionPop .28s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;max-height:90vh;display:flex;flex-direction:column;
+}
+@keyframes guionPop{
+  from{opacity:0;transform:scale(.6) translateY(20px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.guion-pm-header{
+  background:linear-gradient(135deg,var(--blue) 0%,#1d4ed8 100%);
+  padding:20px 22px 16px;color:#fff;flex-shrink:0;
+}
+.guion-pm-tag{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  opacity:.7;margin-bottom:6px;
+}
+.guion-pm-title{font-size:19px;font-weight:800;line-height:1.2}
+.guion-pm-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border:none;border-radius:50%;
+  background:rgba(255,255,255,.2);color:#fff;cursor:pointer;
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.guion-pm-close:hover{background:rgba(255,255,255,.35)}
+.guion-pm-body{
+  padding:20px 22px;overflow-y:auto;flex:1;
+}
+.guion-pm-text{
+  font-size:14px;line-height:1.75;color:var(--text);
+  white-space:pre-wrap;word-break:break-word;
+  background:var(--light);border-radius:10px;padding:16px;
+  border:1.5px solid var(--border);
+}
+.guion-pm-text mark{
+  background:linear-gradient(120deg,#fde68a,#fcd34d);
+  border-radius:3px;padding:0 2px;
+}
+.guion-pm-footer{
+  padding:14px 22px;border-top:1.5px solid var(--border);
+  display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;
+  background:#fafbfc;
+}
+.guion-pm-nombres{
+  padding:12px 22px 0;display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0;
+}
 #modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
   display:none;align-items:center;justify-content:center;padding:20px;
@@ -863,6 +937,29 @@ code{font-family:'DM Mono',monospace;font-size:12px}
 
 <div id="toast"></div>
 <input type="file" id="db-import-input" accept=".json" style="display:none" onchange="procesarArchivoDB(this)">
+
+<!-- ═══════════════════════ MODAL PREVIEW GUIÓN ═══════════════════════ -->
+<div id="guion-preview-overlay">
+  <div class="guion-preview-modal" style="position:relative" onclick="event.stopPropagation()">
+    <div class="guion-pm-header">
+      <div class="guion-pm-tag" id="gpm-tag">Guión</div>
+      <div class="guion-pm-title" id="gpm-title">—</div>
+      <button class="guion-pm-close" id="gpm-close-btn">✕</button>
+    </div>
+    <div class="guion-pm-nombres">
+      <input class="form-input" id="gpm-nombre-contacto" placeholder="[NOMBRE]" style="flex:1;min-width:140px;font-size:12px;padding:6px 10px">
+      <input class="form-input" id="gpm-nombre-asistente" placeholder="[TU NOMBRE]" style="flex:1;min-width:140px;font-size:12px;padding:6px 10px">
+    </div>
+    <div class="guion-pm-body">
+      <div class="guion-pm-text" id="gpm-text"></div>
+    </div>
+    <div class="guion-pm-footer">
+      <button class="btn btn-blue" id="gpm-copiar-btn">📋 Copiar</button>
+      <button class="btn btn-green" id="gpm-wa-btn" style="display:none">💬 WhatsApp</button>
+      <button class="btn btn-ghost" id="gpm-cerrar-btn">Cerrar</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -1308,31 +1405,132 @@ function modalAgregarTabCk() {
   ]);
 }
 
+function copiarTexto(txt, btn) {
+  navigator.clipboard.writeText(txt).then(() => {
+    toast('✅ ¡Copiado!');
+    if (btn) { const o=btn.innerHTML; btn.innerHTML='✅'; btn.classList.add('success'); setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('success')},2000); }
+  }).catch(()=>toast('✅ ¡Copiado!'));
+}
+
+// ── Modal Preview Guión ──
+let _gpmTemplate = '';
+let _gpmShowWA   = false;
+
+function _gpmInit() {
+  const overlay = document.getElementById('guion-preview-overlay');
+  // cerrar al click en el overlay (fondo oscuro)
+  overlay.addEventListener('click', () => _gpmCerrar());
+  // evitar cierre al click dentro del modal (ya tiene stopPropagation en el HTML)
+  document.getElementById('gpm-close-btn').addEventListener('click',  () => _gpmCerrar());
+  document.getElementById('gpm-cerrar-btn').addEventListener('click', () => _gpmCerrar());
+  document.getElementById('gpm-copiar-btn').addEventListener('click', function() { _gpmCopiar(this); });
+  document.getElementById('gpm-wa-btn').addEventListener('click', () => _gpmWA());
+  document.getElementById('gpm-nombre-contacto').addEventListener('input',  actualizarGuionPreview);
+  document.getElementById('gpm-nombre-asistente').addEventListener('input', actualizarGuionPreview);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) _gpmCerrar();
+  });
+}
+
+function abrirGuionPreview(tabNombre, msgNombre, template, showWA) {
+  _gpmTemplate = template;
+  _gpmShowWA   = showWA;
+  document.getElementById('gpm-tag').textContent  = tabNombre;
+  document.getElementById('gpm-title').textContent = msgNombre;
+  document.getElementById('gpm-wa-btn').style.display = showWA ? '' : 'none';
+  // sincronizar nombres con los del panel
+  document.getElementById('gpm-nombre-contacto').value  = document.getElementById('nombre-contacto').value.trim();
+  document.getElementById('gpm-nombre-asistente').value = document.getElementById('nombre-asistente').value.trim();
+  actualizarGuionPreview();
+  document.getElementById('guion-preview-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function actualizarGuionPreview() {
+  const nc  = document.getElementById('gpm-nombre-contacto').value.trim()  || '[NOMBRE]';
+  const na  = document.getElementById('gpm-nombre-asistente').value.trim() || '[TU NOMBRE]';
+  const txt = _gpmTemplate
+    .replace(/\[NOMBRE\]/g, nc)
+    .replace(/\[TU NOMBRE\]/g, na);
+  // HTML con nombres resaltados
+  const escTxt = txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const escNc  = nc.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const escNa  = na.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  let hi = escTxt;
+  if (nc !== '[NOMBRE]')    hi = hi.replace(new RegExp(escNc, 'g'), `<mark>${nc}</mark>`);
+  if (na !== '[TU NOMBRE]') hi = hi.replace(new RegExp(escNa, 'g'), `<mark>${na}</mark>`);
+  document.getElementById('gpm-text').innerHTML = hi;
+}
+
+function _gpmCerrar() {
+  document.getElementById('guion-preview-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function _gpmCopiar(btn) {
+  const nc  = document.getElementById('gpm-nombre-contacto').value.trim()  || '[NOMBRE]';
+  const na  = document.getElementById('gpm-nombre-asistente').value.trim() || '[TU NOMBRE]';
+  const txt = _gpmTemplate.replace(/\[NOMBRE\]/g, nc).replace(/\[TU NOMBRE\]/g, na);
+  navigator.clipboard.writeText(txt).then(() => {
+    toast('✅ ¡Copiado!');
+    if (btn) { const o=btn.innerHTML; btn.innerHTML='✅ Copiado!'; btn.classList.add('success'); setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('success')},2000); }
+  });
+}
+
+function _gpmWA() {
+  const nc  = document.getElementById('gpm-nombre-contacto').value.trim()  || '[NOMBRE]';
+  const na  = document.getElementById('gpm-nombre-asistente').value.trim() || '[TU NOMBRE]';
+  const txt = _gpmTemplate.replace(/\[NOMBRE\]/g, nc).replace(/\[TU NOMBRE\]/g, na);
+  const num = document.getElementById('wa-numero')?.value.replace(/\D/g,'') || '';
+  window.open(num ? `https://wa.me/${num}?text=${encodeURIComponent(txt)}` : `https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
+}
+
+// Caché de templates para el modal de preview (evita problemas de escape en onclick)
+const _gpmCache = {};
+
+function abrirGuionPreviewIdx(cacheKey) {
+  const d = _gpmCache[cacheKey];
+  if (!d) return;
+  abrirGuionPreview(d.tabNombre, d.msgNombre, d.template, d.showWA);
+}
+
 function renderMsgGrid(containerId, mensajes, tabIdx, onChangeFn, showWA = false) {
   const el = document.getElementById(containerId);
   if (!el) return;
   const nc = document.getElementById('nombre-contacto').value.trim() || '[NOMBRE]';
   const na = document.getElementById('nombre-asistente').value.trim() || '[TU NOMBRE]';
+  const arr = onChangeFn === 'guion' ? TABS_GUIONES : TABS_WA;
+  const tabNombre = arr[tabIdx]?.nombre || '';
+
   if (!mensajes.length) { el.innerHTML = '<div class="empty-state">No hay mensajes. Agrega uno con el botón de arriba.</div>'; return; }
   el.innerHTML = mensajes.map((msg, i) => {
-    const id = `msg_${tabIdx}_${i}`;
-    const txt = msg.template.replace(/\[NOMBRE\]/g, nc).replace(/\[TU NOMBRE\]/g, na);
+    const id       = `msg_${tabIdx}_${i}`;
+    const cacheKey = `${onChangeFn}_${tabIdx}_${i}`;
+    const txt      = msg.template.replace(/\[NOMBRE\]/g, nc).replace(/\[TU NOMBRE\]/g, na);
+    const preview  = txt.length > 100 ? txt.slice(0, 100).trimEnd() + '…' : txt;
+    // Guardar en caché para acceder desde onclick sin escapar el template
+    _gpmCache[cacheKey] = { tabNombre, msgNombre: msg.nombre, template: msg.template, showWA };
     return `
-    <div class="msg-card">
+    <div class="msg-card" onclick="abrirGuionPreviewIdx('${cacheKey}')">
       <div class="msg-card-header">
-        <span class="msg-card-label">${msg.nombre}</span>
-        <div class="msg-card-actions">
+        <span class="msg-card-label">${esc(msg.nombre)}</span>
+        <div class="msg-card-actions" onclick="event.stopPropagation()">
+          <button class="icon-btn" onclick="abrirGuionPreviewIdx('${cacheKey}')" title="Preview">👁️</button>
           <button class="icon-btn" onclick="${onChangeFn}_editar(${tabIdx},${i})" title="Editar">✏️</button>
           <button class="icon-btn danger" onclick="${onChangeFn}_eliminar(${tabIdx},${i})" title="Eliminar">🗑️</button>
         </div>
       </div>
-      <textarea class="guion-ta" id="${id}" data-template="${msg.template.replace(/"/g,'&quot;')}"
-        oninput="${onChangeFn}_cambio(${tabIdx},${i},this.value)"
-      >${txt}</textarea>
-      <div class="msg-btns">
-        <button class="btn btn-blue btn-sm" onclick="copiar('${id}',this)">📋 Copiar</button>
-        ${showWA ? `<button class="btn btn-green btn-sm" onclick="abrirWA('${id}')">💬 WhatsApp</button>` : ''}
+      <div class="msg-preview">
+        <div class="msg-preview-text">${esc(preview)}</div>
       </div>
+      <div class="msg-preview-footer" onclick="event.stopPropagation()">
+        <button class="msg-preview-expand" onclick="abrirGuionPreviewIdx('${cacheKey}')">Ver completo ▾</button>
+        <button class="btn btn-blue btn-sm" onclick="copiarTexto(${JSON.stringify(txt)},this)">📋 Copiar</button>
+        ${showWA ? `<button class="btn btn-green btn-sm" onclick="abrirWA('${id}')">💬 WA</button>` : ''}
+      </div>
+      <textarea class="guion-ta" id="${id}" data-template="${msg.template.replace(/"/g,'&quot;')}"
+        oninput="${onChangeFn}_cambio(${tabIdx},${i},this.value)" style="display:none"
+      >${esc(txt)}</textarea>
     </div>`;
   }).join('');
 }
@@ -2801,6 +2999,7 @@ function esc(s) {
   renderAseguradorasList();
   renderAseguradoraDetail();
   actualizarNombre();
+  _gpmInit();
   const vistaGuardada = await cargar('v6_vista', 'view-links');
   activarVista(vistaGuardada, false);
 })();
